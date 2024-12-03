@@ -6,56 +6,25 @@ using namespace std;
 
 void solve(){
     int n; cin >> n;
-    vector<int>h(n);
-    for(auto &i : h){
-        cin >> i;
+    vector<int>h(n + 1), pre(n + 1, LLONG_MIN), suf(n + 2, LLONG_MAX), dp(n + 1);
+    for(int i = 1; i <= n; i++){
+        cin >> h[i];
+        pre[i] = max(pre[i - 1],  h[i]);
     }
-    deque<array<int, 3>>dq;
-    for(int i = 0; i < n; i++){
-        array<int, 3>curr = {i, h[i], h[i]};
-        while(!dq.empty() && curr[1] < dq.back()[2]){
-            curr[2] = max(curr[2], dq.back()[2]);
-            curr[1] = min(curr[1], dq.back()[1]);
-            dq.pop_back();
-        }
-        dq.push_back(curr);
+    for(int i = n; i >= 1; i--){
+        suf[i] = min(h[i], suf[i + 1]);
     }
-    if(DEBUG){
-        for(auto i : dq){
-            cout << i[0] << " " << i[1] << " " << i[2] << '\n';
-        }
-    }
-    set<pair<int, int>>st;
-    int best = -1;
-    for(auto i : dq){
-        best = max(best, i[2]);
-        pair<int, int>temp = make_pair(i[1], best);
-        st.insert(temp);
-    }
-    if(DEBUG){
-        for(auto [a, b] : st){
-            cout << a << " " << b << '\n';
-        }
-    }
-    int bans = h[0];
-    for(int i = 0; i < n; i++){
-        bans = max(bans, h[i]);
-        auto it = st.upper_bound(make_pair(h[i], LLONG_MAX));
-        if(it == st.begin()){
-            cout << h[i] << " ";
+    dp[n] = pre[n];
+    for(int i = n - 1; i >= 1; i--){
+        if(pre[i] > suf[i + 1]){
+            dp[i] = max(pre[i], dp[i + 1]);
         }
         else{
-            it--;
-            while(it != st.begin() && h[i] <= it->first){
-                it--;
-            }
-            if(it == st.begin() && h[i] <= it->first){
-                cout << bans << " ";
-            }
-            else{
-                cout << max(bans, it->second) << " ";
-            }
+            dp[i] = pre[i];
         }
+    }
+    for(int i = 1; i <= n; i++){
+        cout << dp[i] << " ";
     }
     cout << '\n';
 }

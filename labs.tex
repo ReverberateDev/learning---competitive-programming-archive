@@ -1,0 +1,81 @@
+\begin{problem}{Keeping Track of Trainers}{standard input}{standard output}
+    At the \textit{Dec Course 2024}, the number of trainers is small, but the number of participants is overwhelming. Trainers are frequently moving between labs to assist participants, making it challenging for Bei Chen, the organizer, to monitor their activity.
+    
+    To ensure that all trainers are working effectively, Bei Chen wants to keep track of each trainer's current lab. For this, you are tasked with helping Bei Chen answer the following types of queries:
+    
+    \begin{itemize}
+        \item \textbf{Movement Query:} \texttt{1 s i} \\
+        A trainer named $s$ moves to lab $i$. 
+        \begin{itemize}
+            \item Note: A trainer may move to the lab they are already in (e.g., after a short break). 
+            \item A trainer's latest lab assignment is updated with this query.
+        \end{itemize}
+    
+        \item \textbf{Count Query:} \texttt{2 j} \\
+        Output the number of trainers currently in lab $j$. 
+        \begin{itemize}
+            \item Print the result followed by a newline character (\texttt{\textbackslash n}).
+        \end{itemize}
+    \end{itemize}
+    
+    \section*{Legend}
+    \begin{itemize}
+        \item Movement Query: \texttt{1 s i}, where $s$ is the trainer's name and $i$ is the lab number.
+        \item Count Query: \texttt{2 j}, where $j$ is the lab number.
+    \end{itemize}
+    
+    \section*{Input format}
+    \begin{itemize}
+        \item The first line contains a single integer $q$, the number of queries.
+        \item The next $q$ lines contain one of the two types of queries:
+        \begin{itemize}
+            \item \textbf{Movement Query:} \texttt{1 s i} \\
+            - \texttt{1}: The query type. \\
+            - $s$: The name of the trainer (a string consisting of alphanumeric characters). \\
+            - $i$: The lab number (an integer).
+            \item \textbf{Count Query:} \texttt{2 j} \\
+            - \texttt{2}: The query type. \\
+            - $j$: The lab number (an integer).
+        \end{itemize}
+    \end{itemize}
+    
+    \section*{Output format}
+    For each \textbf{Count Query} (\texttt{2 j}), output the number of trainers currently in lab $j$, followed by a newline character (\texttt{\textbackslash n}).
+    
+    \section*{Constraints}
+    \begin{itemize}
+        \item $1 \leq q \leq 10^5$
+        \item $1 \leq i, j \leq 10^5$
+        \item The name of the trainer $s$ is unique across all trainers.
+    \end{itemize}
+    
+    \section*{Example}
+    \begin{example}
+    \exmp{
+    7
+    1 Alice 1
+    1 Bob 2
+    2 1
+    1 Alice 2
+    2 2
+    1 Carol 1
+    2 1
+    }{
+    1
+    2
+    1
+    }
+    \end{example}
+    
+    \section*{Explanation of the Example}
+    \begin{itemize}
+        \item \textbf{Query 1:} Alice moves to lab $1$.
+        \item \textbf{Query 2:} Bob moves to lab $2$.
+        \item \textbf{Query 3:} Count the number of trainers in lab $1$ $\to$ Output \texttt{1} (only Alice is there).
+        \item \textbf{Query 4:} Alice moves to lab $2$.
+        \item \textbf{Query 5:} Count the number of trainers in lab $2$ $\to$ Output \texttt{2} (Bob and Alice are there).
+        \item \textbf{Query 6:} Carol moves to lab $1$.
+        \item \textbf{Query 7:} Count the number of trainers in lab $1$ $\to$ Output \texttt{1} (only Carol is there now).
+    \end{itemize}
+    \end{problem}
+    

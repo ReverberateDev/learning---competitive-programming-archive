@@ -17,7 +17,7 @@ signed main(){
     for(int i = 1; i <= n; i++){
         vect[i] = vect[i - 1] + (i * (s[i] - '0'));
     }
-    for(int i = n; i >= 1 || current > 0; i--){
+    for(int i = n; i >= 1; i--){
         if(DEBUG){
             cout << "Current: " << current << "Carry: " << carry << '\n';
         }
@@ -26,6 +26,7 @@ signed main(){
         current /= 10;
     }
     reverse(ans.begin(), ans.end());
+    cout << ans.size() << '\n';
     for(auto i : ans){
         cout << i;
     }

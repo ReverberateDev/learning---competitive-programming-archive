@@ -24,14 +24,16 @@ void solve(){
     int n, k; cin >> n >> k;
     string s; cin >> s;
     s = '.' + s;
-    vector<int> pre(n + 2, 0);
+    vector<int> pre(n + 1, 0);
     for(int i = 1; i <= n; i++){
         pre[i] = pre[i - 1] + (s[i] == '1' ? 1 : -1);
     }
     int lst = pre[n];
+    pre.erase(pre.begin());
+    pre.pop_back();
     sort(pre.begin(), pre.end());
     int curr = 0;
-    for(int i = 0; pre[i] < 0; i++){
+    for(int i = 0; i < pre.size(); i++){
         curr -= pre[i];
         int tot = curr + (i + 1) * lst;
         if(tot >= k){

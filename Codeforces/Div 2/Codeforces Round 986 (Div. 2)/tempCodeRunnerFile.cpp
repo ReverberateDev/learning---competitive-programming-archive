@@ -2,39 +2,53 @@
 using namespace std;
 #define int long long
 #define double long double
-#define DEBUG 0
+#define DEBUG 1
 #define OUT(x) cerr<<(#x)<<'='<<(x)<<endl
 
 template<class T>
-struct segmentTree {
+struct segmentTree{
     int n;
     vector<T> info;
-
-    segmentTree(int _n, T _v = T()) {
-        init(vector<T>(_n, _v));
+    segmentTree(){
+        
     }
-
-    segmentTree(vector<T> _vect) {
-        init(_vect);
+    segmentTree(int sz){
+        vector<T> _info(sz, T());
+        init(_info);
     }
-
-    void init(vector<T> _vect) {
-        n = _vect.size();
-        int sz = 1 << (__lg(n - 1) + 1);
-        info.assign(sz * 2, T());
-        function<void(int, int, int)> build = [&](int idx, int s, int e) {
-            if (s == e) {
-                info[idx] = _vect[s];
+    void init(vector<T> _info){
+        n = _info.size();
+        int sz = 2 * (1 << (__lg(n - 1) + 1));
+        info.assign(sz, T());
+        function<void(int, int, int)> build = [&](int idx, int s, int e){
+            if(s == e){
+                info[idx] = _info[s];
                 return;
             }
             int m = (s + e) / 2;
             build(2 * idx, s, m);
             build(2 * idx + 1, m + 1, e);
-            info[idx] = info[2 * idx] + info[2 * idx + 1];
+            combine(idx);
         };
-        build(1, 0, n - 1);
+        build(1, 1, n);
     }
-
+    void update(int idx, int s, int e, int x, const T &val){
+        if(s == e){
+            info[idx] = val;
+            return;
+        }
+        int m = (s + e) / 2;
+        if(x <= m){
+            update(2 * idx, s, m, x, val);
+        }
+        else{
+            update(2 * idx + 1, m + 1, e, x, val);
+        }
+        combine(idx);
+    }
+    void update(int x, const T &val){
+        update(1, 1, n, x, val);
+    }
     T query(int idx, int s, int e, int x, int y) {
         if(s == x && e == y){
             return info[idx];
@@ -44,32 +58,16 @@ struct segmentTree {
             return query(2 * idx, s, m, x, y);
         }
         if(x > m){
-            return query(2 * idx + 1, m + 1, e, x, y);
+            return query(2 * idx + 1, s, m + 1, x, y);
         }
         return query(2 * idx, s, m, x, m) + query(2 * idx + 1, m + 1, e, m + 1, y);
     }
 
     T query(int x, int y) {
-        return query(1, 0, n - 1, x, y);
+        return query(1, 1, n, x, y);
     }
-
-    void update(int idx, int s, int e, int pos, const T& val) {
-        if (s == e) {
-            info[idx] = val;
-            return;
-        }
-        int m = (s + e) / 2;
-        if (pos <= m) {
-            update(2 * idx, s, m, pos, val);
-        } 
-        else {
-            update(2 * idx + 1, m + 1, e, pos, val);
-        }
-        info[idx] = info[2 * idx] + info[2 * idx + 1];
-    }
-
-    void update(int pos, const T& val) {
-        update(1, 0, n - 1, pos, val);
+    void combine(int idx){
+        info[idx].combine(info[2 * idx], info[2 * idx + 1]);
     }
 };
 
@@ -84,6 +82,15 @@ struct Info{
     Info(bool _possible, int _card){
         possible = _possible;
         card = _card;
+    }
+    void combine(Info &a, Info &b){
+        possible = a.possible | b.possible;
+        if(a.possible == 1){
+            card = a.card;
+        }
+        else{
+            card = b.card;
+        }
     }
     Info operator+(const Info &other){
         Info res;
@@ -101,12 +108,15 @@ struct Info{
 void solve(){
     int n; cin >> n;
     vector<map<int, int>> values(3);
-    vector<segmentTree<Info>> segTrees;
-    for (int i = 0; i < 3; ++i) {
-        segTrees.emplace_back(segmentTree<Info>(n + 1, Info()));
+    vector<segmentTree<Info>> segTrees(3);
+    vector<pair<int, int>> dp(n + 1);
+    if(DEBUG){
+        cout << "test" << '\n';
     }
-    vector<pair<int, int>> dp(n + 1, {-1, -1});
-    
+    for(int i = 0; i < 3; i++){
+        segTrees[i] = segmentTree<Info>(n + 1);
+    }
+    /*
     for(int i = 0; i < 3; i++){
         segTrees[i] = segmentTree<Info>(n + 1);
         for(int no = 1; no <= n; no++){
@@ -122,8 +132,7 @@ void solve(){
             segTrees[i].update(val, tmp);
         }
     }
-    
-
+    */
     if(DEBUG){
         cout << "Testing initial segment trees\n";
         for(int i = 0; i < 3; i++){
@@ -134,15 +143,14 @@ void solve(){
             }
         }
     }
-    
-    
+    /*
     for(int no = n - 1; no >= 1; no--){
         for(int i = 0; i < 3; i++){
             int val = values[i][no];
-            if(val == 1){
+            if(val == n){
                 continue;
             }
-            Info tmp = segTrees[i].query(1, val - 1);
+            Info tmp = segTrees[i].query(val + 1, n);
             if(!tmp.possible){
                 continue;
             }
@@ -154,39 +162,17 @@ void solve(){
             }
         }
     }
-    if(DEBUG){
-        cout << "outputting dp vector\n";
-        for(auto [a, b] : dp){
-            cout << a << " " << b << '\n';
-        }
+    for(int i = 1; i <= n; i++){
+        auto [a, b] = dp[i];
+        cout << a << " " << b << '\n';
     }
-    if(dp[1].first == -1 && dp[1].second == -1){
-        cout << "NO\n";
-    }
-    else{
-        cout << "YES\n";
-        auto func = [](pair<int, int> tmp) -> pair<char, int> {
-            map<int, char> mp;
-            mp[0] = 'q', mp[1] = 'k', mp[2] = 'j';
-            return {mp[tmp.second], tmp.first};
-        };
-        vector<pair<char, int>> ans;
-        int ptr = 1;
-        while(ptr != n){
-            ans.push_back(func(dp[ptr]));
-            ptr = dp[ptr].first;
-        }
-        cout << ans.size() << '\n';
-        for(auto [a, b] : ans){
-            cout << a << " " << b << '\n';
-        }
-    }
-    
+    */
 }
 
 signed main(){
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
+    //ios_base::sync_with_stdio(0);
+    //cin.tie(0);
+    //cout.tie(0);
     int tt; cin >> tt;
     while(tt--){
         solve();

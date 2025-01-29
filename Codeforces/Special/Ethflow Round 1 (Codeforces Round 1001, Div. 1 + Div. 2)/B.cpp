@@ -6,12 +6,20 @@ using namespace std;
 #define OUT(x) cerr<<(#x)<<'='<<(x)<<endl
 
 void solve(){
-    int a, b; cin >> a >> b;
-    if(a == 1 && b == 1){
-        cout << "1\n";
+    int n; cin >> n;
+    bool flag = false;
+    for(int i = 0; i < n; i++){
+        int v; cin >> v;
+        int dist = max(2 * (n - (i + 1)), 2 * i);
+        if(v <= dist){
+            flag = true;
+        }
+    }
+    if(flag){
+        cout << "NO\n";
     }
     else{
-        cout << b - a << '\n';
+        cout << "YES\n";
     }
 }
 

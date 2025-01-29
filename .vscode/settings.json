@@ -13,6 +13,8 @@
         "bitset": "cpp",
         "set": "cpp",
         "format": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "chrono": "cpp",
+        "span": "cpp"
     }
 }

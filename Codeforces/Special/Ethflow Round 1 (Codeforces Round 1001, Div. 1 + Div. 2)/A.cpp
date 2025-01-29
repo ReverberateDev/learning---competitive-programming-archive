@@ -6,13 +6,14 @@ using namespace std;
 #define OUT(x) cerr<<(#x)<<'='<<(x)<<endl
 
 void solve(){
-    int a, b; cin >> a >> b;
-    if(a == 1 && b == 1){
-        cout << "1\n";
+    string s; cin >> s;
+    int ans = 0;
+    for(auto i : s){
+        if(i == '1'){
+            ans++;
+        }
     }
-    else{
-        cout << b - a << '\n';
-    }
+    cout << ans << '\n';
 }
 
 signed main(){

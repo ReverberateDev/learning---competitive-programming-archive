@@ -7,7 +7,7 @@ using namespace std;
 
 //Assume 1 indexed
 //Let pre[i] be the prefix sum of the number of fishes caught by Bob from 1 to i minus the number of fishes caught by Alice from 1 to i
-//Let s[j] be the end point of the jth group (starts from 0)
+//Let end[j] be the end point of the jth group (starts from 0)
 //Total will be
 //1 group
 //0 * (pre[n] - pre[0])
@@ -18,7 +18,7 @@ using namespace std;
 //0 * (pre[s[0]] - pre[0]) + 1 * (pre[s[1]] - pre[s[0]]) + 2 * (pre[s[2]] - pre[s[1]]) + 3 * (pre[n] - pre[s[2]])...
 // = 0 + (1 * pre[s[1]] - 1 * pre[s[0]]) + (2 * pre[s[2]] - 2 * pre[s[1]]) + (3 * pre[n] - 3 * pre[s[2]])...
 //------------||||||||-------------------------------------|||||||||||||
-// = 0 - pre[s[0]] - pre[s[1]] - pre[s[2]] + j * pre[n]
+// = 0 - pre[s[0]] - pre[s[1]] - pre[s[2]] -pre[s[3]] - pre[s[4]] + j * pre[n]
 
 void solve(){
     int n, k; cin >> n >> k;

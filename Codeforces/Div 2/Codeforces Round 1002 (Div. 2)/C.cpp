@@ -25,7 +25,7 @@ void solve(){
             }
         }
     }
-    set<int> vones;
+    multiset<int> vones;
     for(auto i : ones){
         vones.insert(i);
     }

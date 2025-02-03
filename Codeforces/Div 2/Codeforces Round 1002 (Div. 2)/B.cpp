@@ -26,25 +26,17 @@ void solve(){
         cout << ans << '\n';
     }
     else{
-        int ans = -1;
-        for(int i = 2; i <= n - k + 2; i++){
-            if(a[i] != 1){
+        int ans = 2;
+        for(int i = 1; i < n; i++){
+            int grp = n - i + 1;
+            if(grp < k){
+                break;
+            }
+            if(a[i + 1] != 1){
                 ans = 1;
             }
         }
-        if(ans == -1){
-            int curr = 2;
-            for(int i = n - k + 1; i <= n; i+=2){
-                if(a[i] != curr){
-                    break;
-                }
-                curr++;
-            }
-            cout << curr << '\n';
-        }
-        else{
-            cout << ans << '\n';
-        }
+        cout << ans << '\n';
     }
 }
 

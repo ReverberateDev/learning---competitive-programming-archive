@@ -5,20 +5,14 @@ using namespace std;
 #define DEBUG 1
 #define OUT(x) cerr<<(#x)<<'='<<(x)<<endl
 
-/*
-Try all k^n, let this number be m
-y / x = m => y = m * x
-y / m = x
-*/
-
 void solve(){
     int k, l1, r1, l2, r2; cin >> k >> l1 >> r1 >> l2 >> r2;
     int m = 1, ans = 0;
     for(; r2 / m >= l1;){
-        int l = (l2 - 1) / (m + 1);
+        int l = (l2 + m - 1) / m;
         int r = r2 / m;
         int mn = max(l, l1), mx = min(r, r1);
-        ans += max(mx - mn + 1, 0ll);
+        ans += max(mx - mn + 1ll, 0ll);
         m *= k;
     }
     cout << ans << '\n';

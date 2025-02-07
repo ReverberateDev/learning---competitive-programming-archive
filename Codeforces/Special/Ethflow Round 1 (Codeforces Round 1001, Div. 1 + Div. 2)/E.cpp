@@ -2,8 +2,8 @@
 using namespace std;
 #define int long long
 #define double long double
-#define DEBUG 1
-#define OUT(x) cerr << (#x) << '=' << (x) << endl
+#define DEBUG 0
+#define OUT(x) cerr<<(#x)<<'='<<(x)<<endl
 
 template<class T>
 struct segmentTree {
@@ -55,7 +55,7 @@ struct segmentTree {
 
     void update(int idx, int s, int e, int pos, const T& val) {
         if (s == e) {
-            info[idx] = val;
+            info[idx] += val;
             return;
         }
         int m = (s + e) / 2;
@@ -90,3 +90,63 @@ struct Info {
         return res;
     }
 };
+
+void solve(){
+    int n; cin >> n;
+    map<int, vector<int>> mp;
+    vector<vector<int>> adj(n + 1, vector<int>());
+    for(int i = 1; i <= n; i++){
+        int tmp; cin >> tmp;
+        mp[tmp].push_back(i);
+    }
+    for(int i = 0; i < n - 1; i++){
+        int a, b; cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    int cnt = 0;
+    vector<int> start(n + 1), end(n + 1);
+    function<void(int, int)> euler_tour = [&](int idx, int par) {
+        start[idx] = ++cnt;
+        for(int nidx : adj[idx]){
+            if(nidx == par){
+                continue;
+            }
+            euler_tour(nidx, idx);
+        }
+        end[idx] = cnt;
+    };
+    euler_tour(1, -1);
+    segmentTree<int> segTree(n + 5, 0);
+    int lim = 0;
+    for(auto itr = mp.rbegin(); itr != mp.rend(); itr++){
+        for(auto idx : itr->second){
+            if(DEBUG){
+                cout << "start idx: " << start[idx] << '\n';
+                cout << "end idx: " << end[idx] << '\n';
+                cout << "idx: " << idx << '\n';
+                cout << "weight: " << itr->first << '\n';
+            }
+            int amt = segTree.query(0, start[idx] - 1);
+            amt += segTree.query(end[idx] + 1, n + 1);
+            if(amt >= 1){
+                cout << idx << '\n';
+                return;
+            }
+        }
+        for(auto idx : itr->second){
+            segTree.update(start[idx], 1);
+        }
+    }
+    cout << "0\n";
+}
+
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    int tt; cin >> tt;
+    while(tt--){
+        solve();
+    }
+}

@@ -1,11 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define int long long
 #define double long double
-#define DEBUG 0
+#define DEBUG 1
 #define OUT(x) cerr<<(#x)<<'='<<(x)<<endl
-
-const int inf = 1e18;
 
 void solve(){
     int n, m, k; cin >> n >> m >> k;
@@ -16,42 +13,36 @@ void solve(){
     for(int i = 0; i < m; i++){
         cin >> b[i];
     }
-    vector<int> no(1 << m), bc(1 << m); 
+    vector<int> bm(1 << m), sb(1 << m);
     for(int bmask = 0; bmask < (1 << m); bmask++){
-        int curr = (1 << 30) - 1;
+        int x = (1 << 30) - 1;
         for(int i = 0; i < m; i++){
             if(bmask & (1 << i)){
-                curr &= b[i];
+                x &= b[i];
             }
         }
-        no[bmask] = curr;
-        bc[bmask] = __builtin_popcountll(curr);
+        bm[bmask] = x;
+        sb[bmask] = __builtin_popcountll(bmask);
     }
-    
-    vector<int> gains;
-    int ans = 0;
+    vector<int> gain, c(m + 1);
     for(int i = 0; i < n; i++){
-        vector<int> best(m + 1, 1e18);
-        best[0] = a[i];
-        ans += a[i];
+        fill(c.begin(), c.end(), (1 << 30) - 1);
         for(int bmask = 0; bmask < (1 << m); bmask++){
-            best[bc[bmask]] = min(best[bc[bmask]], a[i] & no[bmask]);
+            c[sb[bmask]] = min(c[sb[bmask]], a[i] & bm[bmask]);
         }
         for(int j = 0; j <= m - 1; j++){
-            //cout << "hello\n";
-            gains.push_back(1);
+            gain.push_back(c[j] - c[j + 1]);
         }
     }
-    /*
-    int cnt = 0;
-    while(k--){
-        if(gains[cnt] <= 0){
-            break;
-        }
-        ans -= gains[cnt++];
+    int64_t ans = 0;
+    for(int i = 0; i < n; i++){
+        ans += a[i];
+    }
+    sort(gain.rbegin(), gain.rend());
+    for(int i = 0; i < k; i++){
+        ans -= gain[i];
     }
     cout << ans << '\n';
-    */
 }
 
 signed main(){

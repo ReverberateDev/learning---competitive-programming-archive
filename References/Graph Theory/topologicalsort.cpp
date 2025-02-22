@@ -1,62 +1,49 @@
-// C++ program to find topological sort.
 #include <bits/stdc++.h>
 using namespace std;
 
-// Function to perform DFS and topological sorting
-void topologicalSortUtil(int v, vector<vector<int> >& adj,
-    vector<bool>& visited, stack<int>& st) {
-        
-    // Mark the current node as visited
-    visited[v] = true;
+vector<vector<int>> adj; // Adjacency list (vector of vectors)
+vector<bool> visited;
+vector<int> topo_order; // To store the topological sort
 
-    // Recur for all adjacent vertices
-    for (int i : adj[v]) {
-        if (!visited[i])
-            topologicalSortUtil(i, adj, visited, st);
+// DFS function to compute topological sort
+void dfs(int node) {
+    visited[node] = true;
+    for (auto v : adj[node]) {
+        if (!visited[v]) {
+            dfs(v);
+        }
     }
-
-    // Push current vertex to stack which stores the result
-    st.push(v);
-}
-
-// Function to perform Topological Sort
-vector<int> topologicalSort(vector<vector<int>>& adj) {
-    int V = adj.size();
-    
-    // Stack to store the result
-    stack<int> st; 
-    vector<bool> visited(V, false);
-
-    // Call the recursive helper function to store
-    // Topological Sort starting from all vertices one by
-    // one
-    for (int i = 0; i < V; i++) {
-        if (!visited[i])
-            topologicalSortUtil(i, adj, visited, st);
-    }
-    
-    vector<int> ans;
-
-    // append contents of stack
-    while (!st.empty()) {
-        ans.push_back(st.top());
-        st.pop();
-    }
-    
-    return ans;
+    topo_order.push_back(node); // Push the node after exploring its neighbors
 }
 
 int main() {
-
-    // Graph represented as an adjacency list
-    vector<vector<int>> adj = {{1}, {2}, {}, {1, 2}};
-
-    vector<int> ans = topologicalSort(adj);
+    int n, m;
+    cin >> n >> m; // n = number of nodes, m = number of edges
     
-    for (auto node: ans) {
+    adj.resize(n + 1); // Resize the adjacency list for n nodes
+    visited.resize(n + 1, false); // Resize the visited array
+
+    // Initialize the adjacency list
+    for (int i = 0; i < m; ++i) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v); // Directed edge from u to v
+    }
+    
+    // Perform DFS for all nodes
+    for (int i = 1; i <= n; ++i) {
+        if (!visited[i]) {
+            dfs(i);
+        }
+    }
+
+    // Output the topological order (reverse the order because we add nodes post DFS)
+    reverse(topo_order.begin(), topo_order.end());
+    cout << "Topological Sort: ";
+    for (int node : topo_order) {
         cout << node << " ";
     }
     cout << endl;
-
+    
     return 0;
 }
